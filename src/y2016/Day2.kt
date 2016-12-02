@@ -9,14 +9,13 @@ class Day2 {
 
 	}
 
-	fun first() {
-		var key = 5
-		getInput(2)
-				.forEach {
-					key = calculateKeyToPress(key, it) { key, direction -> getNextKeySquare(key, direction) }
-					print(key)
+	fun first() = getInput(2)
+			.fold(Result(5, emptyList())) { result, directions ->
+				calculateKeyToPress(result.key, directions) { key, direction -> getNextKeySquare(key, direction) }.let {
+					Result(it, result.keys + it)
 				}
-	}
+			}.keys
+			.forEach(::print)
 
 	private fun calculateKeyToPress(initialKey: Int, directions: String, nextKey: (Int, Char) -> Int) = directions.toCharArray()
 			.fold(initialKey, nextKey)
@@ -36,16 +35,17 @@ class Day2 {
 
 	}
 
-	fun second() {
-		var key = 5
-		getInput(2)
-				.forEach {
-					key = calculateKeyToPress(key, it) { key, direction -> getNextKeyDiamond(key, direction) }
-					print(key.toHex())
-				}
-	}
+	data class Result(val key: Int, val keys: List<Int>)
 
-	private fun Int.toHex() = Integer.toHexString(this).toUpperCase()
+	fun second() = getInput(2)
+			.fold(Result(5, emptyList())) { result, directions ->
+				calculateKeyToPress(result.key, directions) { key, direction -> getNextKeyDiamond(key, direction) }.let {
+					Result(it, result.keys + it)
+				}
+			}.keys
+			.map(Int::toHex)
+			.forEach(::print)
+
 
 	data class DiamondKey(val up: Int?, val down: Int?, val left: Int?, val right: Int?)
 
@@ -74,3 +74,5 @@ class Day2 {
 	}
 
 }
+
+private fun Int.toHex() = Integer.toHexString(this).toUpperCase()
