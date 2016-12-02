@@ -9,25 +9,6 @@ class Day2 {
 
 	}
 
-	fun first() = getInput(2)
-			.fold(Result(5, emptyList())) { result, directions ->
-				calculateKeyToPress(result.key, directions) { key, direction -> getNextKeySquare(key, direction) }.let {
-					Result(it, result.keys + it)
-				}
-			}.keys
-			.forEach(::print)
-
-	private fun calculateKeyToPress(initialKey: Int, directions: String, nextKey: (Int, Char) -> Int) = directions.toCharArray()
-			.fold(initialKey, nextKey)
-
-	private fun getNextKeySquare(key: Int, direction: Char) = when (direction) {
-		'U' -> if (key > 3) key - 3 else key
-		'D' -> if (key < 7) key + 3 else key
-		'L' -> if (((key - 1) % 3) > 0) key - 1 else key
-		'R' -> if (((key - 1) % 3) < 2) key + 1 else key
-		else -> throw RuntimeException()
-	}
-
 	object Second {
 
 		@JvmStatic
@@ -35,37 +16,68 @@ class Day2 {
 
 	}
 
+	object Both {
+
+		@JvmStatic
+		fun main(args: Array<String>) {
+			Day2().first()
+			Day2().second()
+		}
+
+	}
+
 	data class Result(val key: Int, val keys: List<Int>)
 
-	fun second() = getInput(2)
+	data class Key(val up: Int?, val down: Int?, val left: Int?, val right: Int?)
+
+	private val squareKeypad = mapOf(
+			1 to Key(null, 4, null, 2),
+			2 to Key(null, 5, 1, 3),
+			3 to Key(null, 6, 2, null),
+			4 to Key(1, 7, null, 5),
+			5 to Key(2, 8, 4, 6),
+			6 to Key(3, 9, 5, null),
+			7 to Key(4, null, null, 8),
+			8 to Key(5, null, 7, 9),
+			9 to Key(6, null, 8, null)
+	)
+
+	private val diamondKeypad = mapOf(
+			1 to Key(null, 3, null, null),
+			2 to Key(null, 6, null, 3),
+			3 to Key(1, 7, 2, 4),
+			4 to Key(null, 8, 3, null),
+			5 to Key(null, null, null, 6),
+			6 to Key(2, 10, 5, 7),
+			7 to Key(3, 11, 6, 8),
+			8 to Key(4, 12, 7, 9),
+			9 to Key(null, null, 8, null),
+			10 to Key(6, null, null, 11),
+			11 to Key(7, 13, 10, 12),
+			12 to Key(8, null, 11, null),
+			13 to Key(11, null, null, null)
+	)
+
+	fun first() = getCombination(squareKeypad)
+			.plus("\n")
+			.forEach(::print)
+
+	fun second() = getCombination(diamondKeypad)
+			.map(Int::toHex)
+			.plus("\n")
+			.forEach(::print)
+
+	private fun getCombination(keypad: Map<Int, Key>) = getInput(2)
 			.fold(Result(5, emptyList())) { result, directions ->
-				calculateKeyToPress(result.key, directions) { key, direction -> getNextKeyDiamond(key, direction) }.let {
+				calculateKeyToPress(result.key, directions) { key, direction -> getNextKey(keypad, key, direction) }.let {
 					Result(it, result.keys + it)
 				}
 			}.keys
-			.map(Int::toHex)
-			.forEach(::print)
 
+	private fun calculateKeyToPress(initialKey: Int, directions: String, nextKey: (Int, Char) -> Int) = directions.toCharArray()
+			.fold(initialKey, nextKey)
 
-	data class DiamondKey(val up: Int?, val down: Int?, val left: Int?, val right: Int?)
-
-	private val keypad = mapOf(
-			1 to DiamondKey(null, 3, null, null),
-			2 to DiamondKey(null, 6, null, 3),
-			3 to DiamondKey(1, 7, 2, 4),
-			4 to DiamondKey(null, 8, 3, null),
-			5 to DiamondKey(null, null, null, 6),
-			6 to DiamondKey(2, 10, 5, 7),
-			7 to DiamondKey(3, 11, 6, 8),
-			8 to DiamondKey(4, 12, 7, 9),
-			9 to DiamondKey(null, null, 8, null),
-			10 to DiamondKey(6, null, null, 11),
-			11 to DiamondKey(7, 13, 10, 12),
-			12 to DiamondKey(8, null, 11, null),
-			13 to DiamondKey(11, null, null, null)
-	)
-
-	private fun getNextKeyDiamond(key: Int, direction: Char) = when (direction) {
+	private fun getNextKey(keypad: Map<Int, Key>, key: Int, direction: Char) = when (direction) {
 		'U' -> keypad[key]?.up ?: key
 		'D' -> keypad[key]?.down ?: key
 		'L' -> keypad[key]?.left ?: key
