@@ -1,0 +1,62 @@
+package y2016
+
+import java.util.Comparator
+
+fun main(args: Array<String>) {
+	println(first())
+	println(second())
+}
+
+private fun first() = getInput(4)
+		.map(::toRoom)
+		.filter(Room::real)
+		.map(Room::sectorId)
+		.sum()
+
+private fun second() = getInput(4)
+		.map(::toRoom)
+		.filter(Room::real)
+		.filter { it.decryptedName == "northpole object storage" }
+		.map(Room::sectorId)
+
+private fun toRoom(line: String): Room = "([a-z-]+)-([0-9]+)\\[([a-z]+)\\]"
+		.toRegex()
+		.matchEntire(line)!!
+		.let {
+			Room(it.groupValues[1], it.groupValues[2].toInt(), it.groupValues[3])
+		}
+
+data class Room(val encryptedName: String, val sectorId: Int, val checksum: String) {
+
+	val real = encryptedName.toCharArray()
+			.filter { it != '-' }
+			.map { it to 1 }
+			.fold(emptyMap<Char, Int>()) { map, newLetter ->
+				map + (newLetter.first to (map.getOrElse(newLetter.first, { 0 }) + newLetter.second))
+			}.entries
+			.fold(emptyList<Pair<Int, Char>>()) { list, entry ->
+				list + (entry.value to entry.key)
+			}
+			.sortedWith(Comparator<Pair<Int, Char>> { left: Pair<Int, Char>, right: Pair<Int, Char> ->
+				if (left.first > right.first) {
+					-1
+				} else if (left.first < right.first) {
+					1
+				} else if (left.second.toInt() > right.second.toInt()) {
+					1
+				} else if (left.second.toInt() < right.second.toInt()) {
+					-1
+				} else {
+					0
+				}
+			})
+			.map { it.second }
+			.take(5)
+			.joinToString("") == checksum
+
+	val decryptedName = encryptedName.toCharArray()
+			.map { if (it == '-') ' ' else it }
+			.map { if (it == ' ') ' ' else ((((it.toInt() - 97) + sectorId) % 26) + 97).toChar() }
+			.joinToString("")
+
+}
