@@ -1,6 +1,6 @@
 package y2016
 
-import java.util.Comparator
+import java.util.Comparator.comparingInt
 
 fun main(args: Array<String>) {
 	println(first())
@@ -37,19 +37,7 @@ data class Room(val encryptedName: String, val sectorId: Int, val checksum: Stri
 			.fold(emptyList<Pair<Int, Char>>()) { list, entry ->
 				list + (entry.value to entry.key)
 			}
-			.sortedWith(Comparator<Pair<Int, Char>> { left: Pair<Int, Char>, right: Pair<Int, Char> ->
-				if (left.first > right.first) {
-					-1
-				} else if (left.first < right.first) {
-					1
-				} else if (left.second.toInt() > right.second.toInt()) {
-					1
-				} else if (left.second.toInt() < right.second.toInt()) {
-					-1
-				} else {
-					0
-				}
-			})
+			.sortedWith(comparingInt<Pair<Int, Char>> { it.first }.reversed().thenComparingInt<Pair<Int, Char>> { it.second.toInt() })
 			.map { it.second }
 			.take(5)
 			.joinToString("") == checksum
