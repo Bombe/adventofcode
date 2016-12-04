@@ -5,9 +5,9 @@ fun main(args: Array<String>) {
 	println(second())
 }
 
-fun first() = countValidTriangles()
+private fun first() = countValidTriangles()
 
-fun second() = countValidTriangles {
+private fun second() = countValidTriangles {
 	it.fold(FoldResult(emptyList(), emptyList(), emptyList(), emptyList())) { oldFoldResult, columns ->
 		getNewFoldResult(oldFoldResult, columns[0], columns[1], columns[2])
 	}.results
@@ -23,7 +23,7 @@ private fun countValidTriangles(triangleProcessor: (List<List<Int>>) -> List<Lis
 		.filter { it[0] + it[1] > it[2] }
 		.count()
 
-fun getNewFoldResult(oldFoldResult: FoldResult, first: Int, second: Int, third: Int): FoldResult =
+private fun getNewFoldResult(oldFoldResult: FoldResult, first: Int, second: Int, third: Int): FoldResult =
 		oldFoldResult.run {
 			if (firstColumn.size < 2) {
 				FoldResult(results, firstColumn + first, secondColumn + second, thirdColumn + third)
