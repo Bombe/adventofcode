@@ -8,37 +8,19 @@ fun main(args: Array<String>) {
 	println(second())
 }
 
-private fun first(): Int {
-	val cache = mutableMapOf<Int, String>()
-	var index = 0
-	var found = 0
-	while (found < 64) {
-		val triplet = cache.getOrPut(index, { (salt + index).md5() }).triplet()
-		if (triplet != null) {
-			var tempIndex = 1
-			while (tempIndex <= 1000) {
-				if (cache.getOrPut(index + tempIndex, { (salt + (index + tempIndex)).md5() }).quintuplet() == triplet) {
-					found++
-					break
-				}
-				tempIndex++
-			}
-		}
-		index++
-	}
-	return index - 1
-}
+private fun first() = calculateIndexOf64thHash(String::md5)
+private fun second(): Int = calculateIndexOf64thHash(String::stretchedMd5)
 
-private fun second(): Int {
+private fun calculateIndexOf64thHash(hasher: (String) -> String): Int {
 	val cache = mutableMapOf<Int, String>()
 	var index = 0
 	var found = 0
 	while (found < 64) {
-		val triplet = cache.getOrPut(index, { (salt + index).stretchedMd5() }).triplet()
+		val triplet = cache.getOrPut(index, { hasher(salt + index) }).triplet()
 		if (triplet != null) {
 			var tempIndex = 1
 			while (tempIndex <= 1000) {
-				if (cache.getOrPut(index + tempIndex, { (salt + (index + tempIndex)).stretchedMd5() }).quintuplet() == triplet) {
+				if (cache.getOrPut(index + tempIndex, { hasher(salt + (index + tempIndex)) }).quintuplet() == triplet) {
 					found++
 					break
 				}
