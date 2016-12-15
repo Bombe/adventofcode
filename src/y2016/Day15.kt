@@ -1,27 +1,15 @@
 package y2016
 
 fun main(args: Array<String>) {
-	println(first())
-	println(second())
+	println(solve(getWheels()))
+	println(solve(getWheels().let { it + Wheel(it.size + 1, 11, 0) }))
 }
 
-private fun first(): Int {
-	var time = 0
-	val wheels = getWheels()
-	while (!wheels.all { (time + it.index + it.offset) % it.size == 0 }) {
-		time++
-	}
-	return time
-}
+private fun solve(wheels: List<Wheel>) =
+		generateSequence(0) { if (wheels.goesThrough(it)) null else (it + 1) }
+		.last()
 
-private fun second(): Int {
-	var time = 0
-	val wheels = getWheels().let { it + Wheel(it.size + 1, 11, 0) }
-	while (!wheels.all { (time + it.index + it.offset) % it.size == 0 }) {
-		time++
-	}
-	return time
-}
+private fun List<Wheel>.goesThrough(time: Int) = all { (time + it.index + it.offset) % it.size == 0 }
 
 data class Wheel(val index: Int, val size: Int, val offset: Int)
 
