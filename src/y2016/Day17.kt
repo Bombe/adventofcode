@@ -4,27 +4,21 @@ import java.security.MessageDigest
 import javax.xml.bind.DatatypeConverter
 
 fun main(args: Array<String>) {
-	println(first().first())
-	println(second().map { it.length }.first())
+	println(first())
+	println(second())
 }
 
-private fun first(position: Int = 0, passcode: String = passcode(), pathsTaken: List<Set<Char>> = emptyList()): List<String> {
+private fun first() = solve().minBy { it.length }
+
+private fun second() = solve().map { it.length }.max()
+
+private fun solve(position: Int = 0, passcode: String = passcode(), pathsTaken: List<Set<Char>> = emptyList()): List<String> {
 	if (position == 15) {
 		return listOf(pathsTaken.map { it.first() }.joinToString(""))
 	} else {
 		return passcode.possibleDirections(pathsTaken.map { it.first() }.joinToString("")).filter { direction -> isPossible(position, direction) }.flatMap {
-			first(position.move(it), passcode, pathsTaken.plus<Set<Char>>(setOf(it)))
-		}.sortedBy { it.length }
-	}
-}
-
-private fun second(position: Int = 0, passcode: String = passcode(), pathsTaken: List<Set<Char>> = emptyList()): List<String> {
-	if (position == 15) {
-		return listOf(pathsTaken.map { it.first() }.joinToString(""))
-	} else {
-		return passcode.possibleDirections(pathsTaken.map { it.first() }.joinToString("")).filter { direction -> isPossible(position, direction) }.flatMap {
-			first(position.move(it), passcode, pathsTaken.plus<Set<Char>>(setOf(it)))
-		}.sortedByDescending { it.length }
+			solve(position.move(it), passcode, pathsTaken.plus<Set<Char>>(setOf(it)))
+		}
 	}
 }
 
