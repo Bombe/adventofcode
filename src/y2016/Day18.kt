@@ -5,17 +5,16 @@ fun main(args: Array<String>) {
 	println(second())
 }
 
-private fun first() =
-		generateSequence(firstRow(), ::getNextRow)
-				.take(40)
-				.map { it.toCharArray().count { it == '.' } }
-				.sum()
+private fun first() = solve(40)
 
-private fun second() =
-		generateSequence(firstRow(), ::getNextRow)
-				.take(400000)
-				.map { it.toCharArray().count { it == '.' } }
-				.sum()
+private fun second() = solve(400000)
+
+private fun solve(rows: Int): Int {
+	return generateSequence(firstRow(), ::getNextRow)
+			.take(rows)
+			.map { it.toCharArray().count { it == '.' } }
+			.sum()
+}
 
 private fun getNextRow(row: String): String =
 		".$row.".let { safeRow ->
