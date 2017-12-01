@@ -3,16 +3,16 @@ fun main(args: Array<String>) {
 	part2().println()
 }
 
+private fun getInput() = readInput(1)
+		.first()
+		.map { it.toInt() - 48 }
+
 private fun part1() =
-		readInput(1)
-				.first()
-				.map { it.toInt() - 48 }
+		getInput()
 				.solve(1)
 
 private fun part2() =
-		readInput(1)
-				.first()
-				.map { it.toInt() - 48 }
+		getInput()
 				.let { it.solve(it.size / 2) }
 
 private fun List<Int>.solve(rotate: Int) =
