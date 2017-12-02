@@ -24,13 +24,10 @@ private fun part2() = getInput()
 		}
 		.sum()
 
-private fun <T> List<T>.findPairs(pairDetector: (T, T) -> Boolean): List<Pair<T, T>> {
-	val pairs = mutableListOf<Pair<T, T>>()
-	for ((index, value) in dropLast(1).withIndex()) {
-		drop(index + 1)
-				.filter { pairDetector(value, it) }
-				.map { value to it }
-				.forEach { pairs.add(it) }
-	}
-	return pairs
-}
+private fun <T> List<T>.findPairs(pairDetector: (T, T) -> Boolean) =
+		dropLast(1)
+				.mapIndexed { index, value ->
+					drop(index + 1).map { value to it }
+				}
+				.flatMap { it }
+				.filter { pairDetector(it.first, it.second) }
