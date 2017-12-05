@@ -13,9 +13,7 @@ private fun part2(jumps: List<Int> = getInput()) =
 
 private fun processList(jumps: List<Int>, jumpModify: (Int) -> Int) =
 		generateSequence(0 to jumps.toMutableList()) { (position, jumps) ->
-			if ((position < 0) || (position >= jumps.size)) {
-				null
-			} else {
-				(position + jumps[position]) to jumps.apply { set(position, get(position).let(jumpModify)) }
-			}
+			position
+					.takeIf { it in 0 until jumps.size }
+					?.let { (position + jumps[position]) to jumps.apply { set(position, get(position).let(jumpModify)) } }
 		}.toList().size - 1
