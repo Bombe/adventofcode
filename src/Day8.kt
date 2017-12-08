@@ -30,21 +30,17 @@ data class Instruction(val register: String, val amount: Int, val conditionRegis
 
 private fun part1(instructions: List<Instruction> = getInput()) =
 		instructions.fold(emptyMap<String, Int>()) { registers, instruction ->
-			(registers[instruction.conditionRegister] ?: 0)
-					.takeIf(instruction.condition)
-					?.let {
-						registers + (instruction.register to ((registers[instruction.register] ?: 0) + instruction.amount))
-					}
-					?: registers
+			registers.process(instruction)
 		}.maxBy { it.value }!!
 
 private fun part2(instructions: List<Instruction> = getInput()) =
 		instructions.fold(0 to emptyMap<String, Int>()) { (highestValue, registers), instruction ->
-			((registers[instruction.conditionRegister] ?: 0)
-					.takeIf(instruction.condition)
-					?.let {
-						registers + (instruction.register to ((registers[instruction.register] ?: 0) + instruction.amount))
-					}
-					?: registers)
+			registers.process(instruction)
 					.let { max(highestValue, (it.maxBy { it.value }?.value ?: 0)) to it }
 		}.first
+
+private fun Map<String, Int>.process(instruction: Instruction) =
+		if (instruction.condition(this[instruction.conditionRegister] ?: 0))
+			this + (instruction.register to ((this[instruction.register] ?: 0) + instruction.amount))
+		else
+			this
