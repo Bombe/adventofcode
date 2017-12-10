@@ -8,3 +8,8 @@ fun readInput(day: Int): Sequence<String> {
 }
 
 private fun <T> Stream<T>.asSequence(): Sequence<T> = Sequence { iterator() }
+
+fun <T> List<T>.loop(n: Int): List<T> =
+		(0 until n).fold(mutableListOf()) { previous, _ ->
+			previous.apply { addAll(this@loop) }
+		}

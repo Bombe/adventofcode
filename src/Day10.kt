@@ -36,8 +36,3 @@ private fun <T> List<T>.reverse(start: Int, length: Int) =
 		} else {
 			subList(0, start) + subList(start, start + length).reversed() + subList(start + length, size)
 		}
-
-private fun <T> List<T>.loop(n: Int): List<T> =
-		(0 until n).fold(mutableListOf()) { previous, _ ->
-			previous.apply { addAll(this@loop) }
-		}
