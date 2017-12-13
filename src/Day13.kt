@@ -13,21 +13,10 @@ private fun getInput() = readInput(13)
 		.toMap()
 
 private fun part1(firewall: Map<Int, Int> = getInput()) =
-		calculateDamage(firewall)
-
-private fun calculateDamage(firewall: Map<Int, Int>, delay: Int = 0): Int {
-	return firewall.entries
-			.filter { (layer, depth) ->
-				(layer + delay) % ((depth - 1) * 2) == 0
-			}.map { (layer, depth) -> layer * depth }
-			.sum()
-}
-
-private fun isDetected(firewall: Map<Int, Int>, delay: Int = 0) =
 		firewall.entries
-				.any { (layer, depth) ->
-					(layer + delay) % ((depth - 1) * 2) == 0
-				}
+				.filter { (layer, _) -> firewall.hitScanner(layer) }
+				.map { (layer, depth) -> layer * depth }
+				.sum()
 
 private fun part2(firewall: Map<Int, Int> = getInput()) =
 		generateSequence(0 to isDetected(firewall, 0)) { (delay, _) ->
@@ -35,3 +24,10 @@ private fun part2(firewall: Map<Int, Int> = getInput()) =
 		}
 				.first { (_, detected) -> !detected }
 				.first
+
+private fun Map<Int, Int>.hitScanner(layer: Int, delay: Int = 0)
+		= (layer + delay) % ((get(layer)!! - 1) * 2) == 0
+
+private fun isDetected(firewall: Map<Int, Int>, delay: Int = 0) =
+		firewall.keys
+				.any { layer -> firewall.hitScanner(layer, delay) }
