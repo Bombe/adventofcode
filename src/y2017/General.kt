@@ -1,3 +1,5 @@
+package y2017
+
 import java.util.stream.Stream
 
 fun Any.println() = println(this)

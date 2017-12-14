@@ -1,3 +1,5 @@
+package y2017
+
 fun main(args: Array<String>) {
 	part1().println()
 	part2().println()

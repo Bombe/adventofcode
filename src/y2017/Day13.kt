@@ -1,3 +1,5 @@
+package y2017
+
 fun main(args: Array<String>) {
 	part1(mapOf(0 to 3, 1 to 2, 4 to 4, 6 to 4)).println()
 	part1().println()
