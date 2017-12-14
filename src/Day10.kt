@@ -12,15 +12,18 @@ private fun part1(hashSize: Int = 256, input: List<Int> = getInput1()) = input
 					(position + length + skipSize) % elements.size, skipSize + 1)
 		}.elements.let { it[0] * it[1] }
 
-private fun part2(hashSize: Int = 256, input: List<Byte> = getInput2()) = (input + listOf<Byte>(17, 31, 73, 47, 23)).loop(64)
-		.fold(Hasher((0 until hashSize).toList())) { (elements, position, skipSize), length ->
-			Hasher(elements.reverse(position, length.toInt()),
-					(position + length + skipSize) % elements.size, skipSize + 1)
-		}.elements.also(::println).chunked(16)
-		.map { it.fold(0) { prev, current -> prev xor current }.toByte() }
+private fun part2(hashSize: Int = 256, input: List<Byte> = getInput2()) = knotHash(input, hashSize)
 		.map { Integer.toHexString(it.toInt() and 0xff) }
 		.map { if (it.length < 2) "0" + it else it }
 		.joinToString("")
+
+fun knotHash(input: List<Byte>, hashSize: Int = 256) =
+		(input + listOf<Byte>(17, 31, 73, 47, 23)).loop(64)
+				.fold(Hasher((0 until hashSize).toList())) { (elements, position, skipSize), length ->
+					Hasher(elements.reverse(position, length.toInt()),
+							(position + length + skipSize) % elements.size, skipSize + 1)
+				}.elements.chunked(16)
+				.map { it.fold(0) { prev, current -> prev xor current }.toByte() }
 
 private data class Hasher(val elements: List<Int>, val position: Int = 0, val skipSize: Int = 0)
 
