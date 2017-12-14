@@ -29,11 +29,11 @@ private fun processScreen(screen: BooleanArray) = getLines()
 			}
 		}
 
-fun List<Boolean>.rect(a: Int, b: Int) = mapIndexed { index, value ->
+private fun List<Boolean>.rect(a: Int, b: Int) = mapIndexed { index, value ->
 	if ((index % width < a) && (index / width < b)) true else value
 }
 
-fun List<Boolean>.rotateColumn(column: Int, offset: Int) = let {
+private fun List<Boolean>.rotateColumn(column: Int, offset: Int) = let {
 	it.filterIndexed { index, value -> (index % width) == column }.let { oldColumn ->
 		it.mapIndexed { index, value ->
 			if ((index % width) != column) {
@@ -45,7 +45,7 @@ fun List<Boolean>.rotateColumn(column: Int, offset: Int) = let {
 	}
 }
 
-fun List<Boolean>.rotateRow(row: Int, offset: Int) = let {
+private fun List<Boolean>.rotateRow(row: Int, offset: Int) = let {
 	it.filterIndexed { index, value -> (index / width) == row }.let { oldRow ->
 		it.mapIndexed { index, value ->
 			if ((index / width) != row) {
@@ -57,7 +57,7 @@ fun List<Boolean>.rotateRow(row: Int, offset: Int) = let {
 	}
 }
 
-fun List<Boolean>.display() =
+private fun List<Boolean>.display() =
 		mapIndexed { index, value ->
 			(if (value) "\u2588" else " ").let {
 				it + (if (index % width == (width - 1)) "\n" else if (index % letterWidth == (letterWidth - 1)) " " else "")

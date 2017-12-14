@@ -7,13 +7,13 @@ fun main(args: Array<String>) {
 	println(second())
 }
 
-private fun first() = getInput(4)
+private fun first() = getInput()
 		.map(::toRoom)
 		.filter(Room::real)
 		.map(Room::sectorId)
 		.sum()
 
-private fun second() = getInput(4)
+private fun second() = getInput()
 		.map(::toRoom)
 		.filter(Room::real)
 		.filter { it.decryptedName == "northpole object storage" }
@@ -48,3 +48,7 @@ data class Room(val encryptedName: String, val sectorId: Int, val checksum: Stri
 			.joinToString("")
 
 }
+
+private fun getInput(day: Int = 4) = AllDays().javaClass.getResourceAsStream("day$day.txt")
+		.reader()
+		.readLines()

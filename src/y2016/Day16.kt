@@ -6,18 +6,20 @@ fun main(args: Array<String>) {
 	println(solve(targetLength = getSecondTargetLength()))
 }
 
-private fun solve(input: String = getInput(), targetLength: Int): String {
-	var currentValue = input
-	while (currentValue.length < targetLength) {
-		currentValue += "0" + currentValue.reversed().inverse()
-	}
-	currentValue = currentValue.substring(0, targetLength)
-	var checksum = currentValue.checksum()
-	while (checksum.length % 2 == 0) {
-		checksum = checksum.checksum()
-	}
-	return checksum
-}
+private fun solve(input: String = getInput(), targetLength: Int) =
+		getDiskData(input, targetLength).getChecksum()
+
+private tailrec fun getDiskData(data: String, targetLength: Int): String =
+		if (data.length >= targetLength)
+			data.substring(0 until targetLength)
+		else
+			getDiskData(data + "0" + data.reversed().inverse(), targetLength)
+
+private tailrec fun String.getChecksum(): String =
+		if (length % 2 == 1)
+			this
+		else
+			checksum().getChecksum()
 
 private fun String.inverse() = toCharArray().map {
 	when (it) {

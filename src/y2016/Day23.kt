@@ -53,7 +53,7 @@ private class Cpu2 private constructor(private val registers: IntArray, val ip: 
 		}
 	}
 
-	private fun getValue(source: String) = if (source in listOf("a", "b", "c", "d")) registers[source[0] - 'a']!! else source.toInt()
+	private fun getValue(source: String) = if (source in listOf("a", "b", "c", "d")) registers[source[0] - 'a']else source.toInt()
 
 }
 
