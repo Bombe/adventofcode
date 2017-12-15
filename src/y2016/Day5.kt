@@ -4,7 +4,7 @@ import java.security.MessageDigest
 import javax.xml.bind.DatatypeConverter
 
 fun main(args: Array<String>) {
-	getInput().first().let {
+	getInput(5).first().let {
 		println(first(it))
 		println(second(it))
 	}
@@ -34,7 +34,3 @@ private fun hash(input: String, index: Int) =
 		DatatypeConverter.printHexBinary(md5.digest("$input$index".toByteArray()))
 
 private fun String.parseHex() = Integer.parseInt(this, 16)
-
-private fun getInput(day: Int = 5) = AllDays().javaClass.getResourceAsStream("day$day.txt")
-		.reader()
-		.readLines()
