@@ -18,21 +18,17 @@ private val multiplicatorB = 48271
 private val divider = 2147483647
 
 private fun part1(firstValueA: Long = startValueA, firstValueB: Long = startValueB) =
-		generateSequence(firstValueA to firstValueB) { (valueA, valueB) ->
-			(valueA * multiplicatorA % divider) to (valueB * multiplicatorB % divider)
-		}.drop(1)
-				.take(40000000)
-				.count { (it.first and 0xffff) == (it.second and 0xffff) }
+		part2(firstValueA, firstValueB, { true }, { true }, 40000000)
 
 private fun acceptableForA(value: Long) = (value % 4) == 0L
 private fun acceptableForB(value: Long) = (value % 8) == 0L
 
-private fun part2(firstValueA: Long = startValueA, firstValueB: Long = startValueB) =
+private fun part2(firstValueA: Long = startValueA, firstValueB: Long = startValueB, acceptableForA: (Long) -> Boolean = ::acceptableForA, acceptableForB: (Long) -> Boolean = ::acceptableForB, generateCount: Int = 5000000) =
 		generateSequence(firstValueA) { valueA ->
 			(valueA * multiplicatorA % divider)
-		}.drop(1).filter(::acceptableForA)
+		}.drop(1).filter(acceptableForA)
 				.zip(generateSequence(firstValueB) { valueB ->
 					(valueB * multiplicatorB % divider)
-				}.drop(1).filter(::acceptableForB))
-				.take(5000000)
+				}.drop(1).filter(acceptableForB))
+				.take(generateCount)
 				.count { (it.first and 0xffff) == (it.second and 0xffff) }
