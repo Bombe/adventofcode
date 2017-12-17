@@ -44,16 +44,18 @@ private class Partner(private val a: Int, private val b: Int) : Move() {
 	}
 }
 
+private fun performDanceMoves(programs: MutableList<Int>, moves: List<Move>) =
+		moves.fold(programs) { programs_, move ->
+			move.execute(programs_)
+		}
+
 private fun part1(numberOfPrograms: Int = 16, moves: List<Move> = getInput()) =
-		moves.fold((1..numberOfPrograms).toMutableList()) { programs, move ->
-			move.execute(programs)
-		}.joinToString("") { (it + 96).toChar().toString() }
+		performDanceMoves((1..numberOfPrograms).toMutableList(), moves)
+				.joinToString("") { (it + 96).toChar().toString() }
 
 private fun part2(numberOfPrograms: Int = 16, moves: List<Move> = getInput(), cache: MutableMap<List<Int>, List<Int>> = mutableMapOf()) =
 		(1..1000000000).fold((1..numberOfPrograms).toList()) { programs, _ ->
 			cache.getOrPut(programs) {
-				moves.fold(programs.toMutableList()) { programs, move ->
-					move.execute(programs)
-				}.toList()
+				performDanceMoves(programs.toMutableList(), moves).toList()
 			}
 		}.joinToString("") { (it + 96).toChar().toString() }
