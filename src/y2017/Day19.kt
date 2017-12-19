@@ -37,15 +37,15 @@ private fun findMazeEntry(maze: Map<Pair<Int, Int>, Char>) =
 
 private fun Map<Pair<Int, Int>, Char>.findNext(mazeState: MazeState) =
 		if (this[mazeState.location] in 'A'..'Z') {
-			mazeState.next().copy(letters = mazeState.letters + this[mazeState.location], steps = mazeState.steps + 1)
+			mazeState.next().copy(letters = mazeState.letters + this[mazeState.location])
 		} else {
 			if (mazeState.next().location in this) {
-				mazeState.next().copy(steps = mazeState.steps + 1)
+				mazeState.next()
 			} else {
 				listOf(Up, Down, Left, Right)
 						.filterNot { it == mazeState.direction.inverse }
 						.firstOrNull { mazeState.location.next(it) in this }
-						?.let { mazeState.copy(location = mazeState.location.next(it), direction = it, steps = mazeState.steps + 1) }
+						?.let { mazeState.next(it) }
 			}
 		}
 
@@ -57,8 +57,9 @@ private fun Pair<Int, Int>.next(direction: Direction) = when (direction) {
 }
 
 private enum class Direction { Up, Down, Left, Right }
+
 private val Direction.inverse get() = listOf(Down, Up, Right, Left)[ordinal]
 
 private data class MazeState(val location: Pair<Int, Int>, val direction: Direction = Down, val letters: String = "", val steps: Int = 0)
 
-private fun MazeState.next() = copy(location = location.next(direction))
+private fun MazeState.next(direction: Direction = this.direction) = copy(location = location.next(direction), direction = direction, steps = steps + 1)
