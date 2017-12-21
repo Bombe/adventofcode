@@ -15,3 +15,7 @@ fun <T> List<T>.loop(n: Int): List<T> =
 		(0 until n).fold(mutableListOf()) { previous, _ ->
 			previous.apply { addAll(this@loop) }
 		}
+
+val Int.even get() = (this and 1) == 0
+val Int.sqr get() = this * this
+val Int.sqrt get() = Math.sqrt(toDouble()).toInt()

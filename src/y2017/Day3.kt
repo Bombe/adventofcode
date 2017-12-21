@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
 private fun getInput() = readInput(3).first().toInt()
 
 private fun part1(input: Int = getInput()) =
-		input.sqrt().let { squareRoot ->
+		input.sqrt.let { squareRoot ->
 			(input - squareRoot * squareRoot).let { diff ->
 				when (diff) {
 					0 -> (squareRoot / 2) + (squareRoot / 2 - 1 + diff.odd())
@@ -20,4 +20,3 @@ private fun part1(input: Int = getInput()) =
 		}
 
 private fun Int.odd() = this and 1
-private fun Int.sqrt() = kotlin.math.sqrt(toDouble()).toInt()
