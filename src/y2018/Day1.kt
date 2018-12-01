@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
 	part2()?.println()
 }
 
-fun part1() = readInput(1)
+private fun part1() = readInput(1)
 		.map(Integer::parseInt)
 		.sum()
 
