@@ -18,11 +18,11 @@ private fun part1() = readInput(2)
 
 private fun part2() = readInput(2).toList()
 		.let { input ->
-			input.flatMap { it.matchesCloselyOnIn(input) }
+			input.flatMap { it.matchesClosely(input) }
 		}
 		.distinct()
 
-private fun String.matchesCloselyOnIn(codes: List<String>) =
+private fun String.matchesClosely(codes: List<String>) =
 		codes.map { findCommonLetters(it, this) }
 				.filter { it.size == (this.length - 1) }
 				.map { it.joinToString("") }
