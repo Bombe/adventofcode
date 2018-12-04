@@ -32,3 +32,5 @@ fun <T> List<T>.loop(n: Int): List<T> =
 val Int.even get() = (this and 1) == 0
 val Int.sqr get() = this * this
 val Int.sqrt get() = Math.sqrt(toDouble()).toInt()
+
+val Pair<Int, Int>.product get() = first * second
