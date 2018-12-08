@@ -20,13 +20,13 @@ private fun Sequence<String>.parseTree() =
 				.split(" ")
 				.map(Integer::parseInt)
 				.iterator()
-				.let(::parseNode)
+				.parseNode()
 
-private fun parseNode(data: Iterator<Int>): Node =
-		data.next().let { childNodeCount ->
-			data.next().let { metadataCount ->
-				val childNodes = (0 until childNodeCount).map { parseNode(data) }
-				val metadata = (0 until metadataCount).map { data.next() }
+private fun Iterator<Int>.parseNode(): Node =
+		next().let { childNodeCount ->
+			next().let { metadataCount ->
+				val childNodes = (0 until childNodeCount).map { parseNode() }
+				val metadata = (0 until metadataCount).map { next() }
 				Node(childNodes, metadata)
 			}
 		}
