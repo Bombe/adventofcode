@@ -25,16 +25,13 @@ private fun Sequence<String>.toGameEnd() =
 				.let { it[0] to it[1] }
 
 private fun GameEnd.scoreOfWinner() =
-		mutableMapOf<Int, Long>().also { players ->
-			var currentPlayer = 0
+		LinkedList<Long>(List(this.players) { 0L }).also { players ->
 			Game().loopUntil { game ->
 				val (newGame, score) = game.placeNextMarble()
-				val playerScore = players.getOrDefault(currentPlayer, 0)
-				players[currentPlayer] = playerScore + score
-				currentPlayer = (currentPlayer + 1) % this.players
+				players.addLast(players.removeFirst() + score)
 				(game.nextMarble == lastMarble) to newGame
 			}
-		}.values.max()!!
+		}.max()!!
 
 private typealias GameEnd = Pair<Int, Int>
 
