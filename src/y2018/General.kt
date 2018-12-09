@@ -29,6 +29,17 @@ fun <T> List<T>.loop(n: Int): List<T> =
 			previous.apply { addAll(this@loop) }
 		}
 
+fun <T> T.loopUntil(loop: (T) -> Pair<Finished, T>): T {
+	var currentState = this
+	do {
+		val (finished, nextState) = loop(currentState)
+		currentState = nextState
+	} while (!finished)
+	return currentState
+}
+
+typealias Finished = Boolean
+
 val Int.even get() = (this and 1) == 0
 val Int.sqr get() = this * this
 val Int.sqrt get() = Math.sqrt(toDouble()).toInt()
