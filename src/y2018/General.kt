@@ -4,6 +4,13 @@ import java.util.stream.*
 
 fun Any.println() = println(this)
 
+fun <R> timed(block: () -> R) =
+		System.currentTimeMillis().let { startTime ->
+			block() to (System.currentTimeMillis() - startTime)
+		}.also {
+			println("${it.first} (${it.second / 1000.0}ms)")
+		}
+
 fun readInput(day: Int): Sequence<String> {
 	class Foo
 	return Foo::class.java.getResourceAsStream("Input$day.txt").bufferedReader().lines().asSequence()

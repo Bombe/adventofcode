@@ -3,8 +3,8 @@ package y2018
 import java.util.*
 
 fun main(args: Array<String>) {
-	part1().println()
-	part2().println()
+	timed { part1() }
+	timed { part2() }
 }
 
 private fun part1() = readInput(9)
