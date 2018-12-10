@@ -8,7 +8,7 @@ fun <R> timed(block: () -> R) =
 		System.currentTimeMillis().let { startTime ->
 			block() to (System.currentTimeMillis() - startTime)
 		}.also {
-			println("${it.first} (${it.second / 1000.0}ms)")
+			println("${it.first} (${it.second / 1000.0}s)")
 		}
 
 fun readInput(day: Int): Sequence<String> {
