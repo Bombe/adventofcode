@@ -7,17 +7,14 @@ fun main(args: Array<String>) {
 
 private fun part1() =
 		coordinates(298, 298, 1, 1)
-				.maxBy { coordinate -> powerLevel(coordinate, 3) }!!
+				.map { it to powerLevel(it, 3) }
+				.maxBy { it.second }!!.first
 
 private fun part2() =
-		(3..300).reversed().map { gridSize ->
+		(3..300).map { gridSize ->
 			coordinates(301 - gridSize, 301 - gridSize, 1, 1)
-					.fold((0 to 0) to Integer.MIN_VALUE) { (coordinate, powerlevel), nc ->
-						powerLevel(nc, gridSize).let { pl: Int ->
-							if (pl > powerlevel)
-								(nc) to pl else coordinate to powerlevel
-						}
-					}.let { (it.first to gridSize) to it.second }
+					.map { (it to gridSize) to powerLevel(it, gridSize) }
+					.maxBy { it.second }!!
 		}.maxBy { it.second }!!.first
 
 private fun coordinates(width: Int, height: Int, left: Int = 0, top: Int = 0) =
@@ -27,19 +24,28 @@ private fun coordinates(width: Int, height: Int, left: Int = 0, top: Int = 0) =
 			if (nextY == (top + height)) null else nextX to nextY
 		}
 
-private val serialNumber = readInput(11).single().let(Integer::parseInt)
-private val powerLevels = (1..300).flatMap { y -> (1..300).map { x -> (x to y) to powerLevel(x, y, serialNumber) } }
-		.toMap()
-private val powerLevels2 = mutableMapOf<Pair<Coordinate, Int>, Int>()
-
-private fun powerLevel(x: Int, y: Int, serialNumber: Int) = (x + 10).let { rackId ->
-	(((rackId * y + serialNumber) * rackId) % 1000) / 100 - 5
-}
-
 private fun powerLevel(coordinate: Coordinate, gridSize: Int): Int =
-		powerLevels2.getOrPut(coordinate to gridSize) {
-			if (gridSize == 1) powerLevels[coordinate]!! else
-				powerLevel(coordinate, gridSize - 1) +
-						(0 until gridSize - 1).map { powerLevels[coordinate.first + gridSize - 1 to coordinate.second + it]!! }.sum() +
-						(0 until gridSize).map { powerLevels[coordinate.first + it to coordinate.second + gridSize - 1]!! }.sum()
+		areaSum(coordinate.x + gridSize - 1 to coordinate.y + gridSize - 1) +
+				areaSum(coordinate.x - 1 to coordinate.y - 1) -
+				areaSum(coordinate.x + gridSize - 1 to coordinate.y - 1) -
+				areaSum(coordinate.x - 1 to coordinate.y + gridSize - 1)
+
+private fun areaSum(coordinate: Coordinate): Int =
+		summedAreaTable.getOrPut(coordinate) {
+			when {
+				coordinate.x < 1 || coordinate.y < 1 -> 0
+				else -> powerLevel(coordinate) +
+						areaSum(coordinate.x to coordinate.y - 1) +
+						areaSum(coordinate.x - 1 to coordinate.y) -
+						areaSum(coordinate.x - 1 to coordinate.y - 1)
+			}
 		}
+
+private fun powerLevel(coordinate: Coordinate) =
+		(coordinate.x + 10).let { rackId ->
+			(((rackId * coordinate.y + serialNumber) * rackId) % 1000) / 100 - 5
+		}
+
+private val summedAreaTable = mutableMapOf<Coordinate, Int>()
+
+private val serialNumber = readInput(11).single().let(Integer::parseInt)
