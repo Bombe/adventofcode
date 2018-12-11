@@ -1,7 +1,5 @@
 package y2018
 
-import java.lang.Math.*
-
 fun main(args: Array<String>) {
 	part1().println()
 	part2().println()
@@ -39,11 +37,6 @@ private fun Grid.findCenterRegion() =
 				.map { getDistanceFromAllCoordinates(it) }
 				.filter { it < 10000 }
 				.size
-
-typealias Coordinate = Pair<Int, Int>
-
-operator fun Coordinate.minus(coordinate: Coordinate): Coordinate = (first - coordinate.first) to (second - coordinate.second)
-fun Coordinate.distanceTo(coordinate: Coordinate) = abs(coordinate.first - first) + abs(coordinate.second - second)
 
 data class Grid(private val coordinates: List<Coordinate>) {
 	private val minX = coordinates.map(Pair<Int, Int>::first).min()!!
