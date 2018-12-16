@@ -63,3 +63,5 @@ fun Coordinate.distanceTo(coordinate: Coordinate) = Math.abs(coordinate.first - 
 
 fun <T> List<T>.endsWith(elements: List<T>) =
 		takeLast(elements.size) == elements
+
+fun <T> List<T>.replace(index: Int, element: T) = subList(0, index) + element + subList(index + 1, size)
