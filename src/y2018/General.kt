@@ -58,6 +58,7 @@ typealias Coordinate = Pair<Int, Int>
 val Coordinate.x get() = first
 val Coordinate.y get() = second
 
+operator fun Coordinate.plus(coordinate: Coordinate): Coordinate = (first + coordinate.first) to (second + coordinate.second)
 operator fun Coordinate.minus(coordinate: Coordinate): Coordinate = (first - coordinate.first) to (second - coordinate.second)
 fun Coordinate.distanceTo(coordinate: Coordinate) = Math.abs(coordinate.first - first) + Math.abs(coordinate.second - second)
 
