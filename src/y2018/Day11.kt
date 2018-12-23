@@ -17,7 +17,7 @@ private fun part2() =
 					.maxBy { it.second }!!
 		}.maxBy { it.second }!!.first
 
-private fun coordinates(width: Int, height: Int, left: Int = 0, top: Int = 0) =
+fun coordinates(width: Int, height: Int, left: Int = 0, top: Int = 0): Sequence<Coordinate> =
 		generateSequence(left to top) { (x, y) ->
 			val nextX = (x + 1).let { if (it == (left + width)) left else it }
 			val nextY = if (nextX == left) y + 1 else y

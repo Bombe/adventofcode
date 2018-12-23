@@ -1,5 +1,6 @@
 package y2018
 
+import java.time.*
 import java.util.stream.*
 
 fun Any.println() = println(this)
@@ -66,3 +67,17 @@ fun <T> List<T>.endsWith(elements: List<T>) =
 		takeLast(elements.size) == elements
 
 fun <T> List<T>.replace(index: Int, element: T) = subList(0, index) + element + subList(index + 1, size)
+
+val oncePerSecond = OncePerDuration(Duration.ofSeconds(1))
+
+class OncePerDuration(private val duration: Duration) {
+	private var last = System.currentTimeMillis()
+	operator fun invoke(action: () -> Unit) {
+		System.currentTimeMillis().let { now ->
+			if (Duration.ofMillis(now - last) >= duration) {
+				last = now
+				action()
+			}
+		}
+	}
+}
