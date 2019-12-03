@@ -62,6 +62,7 @@ val Coordinate.y get() = second
 operator fun Coordinate.plus(coordinate: Coordinate): Coordinate = (first + coordinate.first) to (second + coordinate.second)
 operator fun Coordinate.minus(coordinate: Coordinate): Coordinate = (first - coordinate.first) to (second - coordinate.second)
 fun Coordinate.distanceTo(coordinate: Coordinate) = Math.abs(coordinate.first - first) + Math.abs(coordinate.second - second)
+fun Coordinate.manhattanDistanceTo(coordinate: Coordinate = Coordinate(0, 0)) = Math.abs(first - coordinate.first) + Math.abs(second - coordinate.second)
 
 fun <T> List<T>.endsWith(elements: List<T>) =
 		takeLast(elements.size) == elements
