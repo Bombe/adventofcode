@@ -55,14 +55,3 @@ private fun part2() = readInput(2)
 				}
 			}
 		}
-
-class IntCode(val ints: MutableList<Int>, private val ip: Int = 0) {
-
-	fun exec() = when (ints[ip]) {
-		1 -> IntCode(ints.apply { set(ints[ip + 3], ints[ints[ip + 1]] + ints[ints[ip + 2]]) }, ip + 4)
-		2 -> IntCode(ints.apply { set(ints[ip + 3], ints[ints[ip + 1]] * ints[ints[ip + 2]]) }, ip + 4)
-		99 -> null
-		else -> throw IllegalStateException()
-	}
-
-}
