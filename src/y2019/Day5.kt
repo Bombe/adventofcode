@@ -28,9 +28,9 @@ private fun part1() = input.runWithFixedInput(1)
 
 private fun part2() = input.runWithFixedInput(5)
 
-private fun IntCode.runWithFixedInput(input: Int) =
+private fun IntCode.runWithFixedInput(input: Long) =
 		let {
-			var lastOutput = 0
+			var lastOutput = 0L
 			loopUntil { intCode ->
 				intCode.exec({ input }, { lastOutput = it })?.let { false to it } ?: (true to intCode)
 			}
@@ -39,4 +39,4 @@ private fun IntCode.runWithFixedInput(input: Int) =
 
 
 private val input
-	get() = readInput(5).single().split(",").map(String::toInt).toMutableList().let { IntCode(it) }
+	get() = readInput(5).single().split(",").map(String::toLong).mapIndexed { index, l -> index to l }.toMap().toMutableMap().let { IntCode(it) }

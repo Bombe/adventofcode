@@ -18,6 +18,7 @@
 package y2019
 
 import y2018.*
+import y2019.Mode.*
 import java.util.concurrent.atomic.*
 
 fun readInput(day: Int): Sequence<String> {
@@ -27,40 +28,66 @@ fun readInput(day: Int): Sequence<String> {
 
 fun Any?.println() = println(this)
 
-class IntCode(val ints: MutableList<Int>, private val ip: Int = 0) {
+data class IntCode(val memory: MutableMap<Int, Long>, private val ip: Int = 0, private val relativeBase: Int = 0) {
 
-	fun exec(input: () -> Int? = { 0 }, output: (Int) -> Unit = {}) = ints[ip].toInstruction()
+	fun exec(input: () -> Long? = { 0 }, output: (Long) -> Unit = {}) = memory[ip]!!.toInstruction()
 			.let { instruction ->
 				when (instruction.opcode) {
-					1 -> IntCode(ints.apply { this[getValue(ip + 3)] = getValue(ip + 1, instruction.immediate1) + getValue(ip + 2, instruction.immediate2) }, ip + 4)
-					2 -> IntCode(ints.apply { this[getValue(ip + 3)] = getValue(ip + 1, instruction.immediate1) * getValue(ip + 2, instruction.immediate2) }, ip + 4)
-					3 -> input()?.let { IntCode(ints.apply { this[getValue(ip + 1)] = it }, ip + 2) } ?: throw IllegalStateException("no input")
-					4 -> IntCode(ints.apply { output(getValue(ip + 1, instruction.immediate1)) }, ip + 2)
-					5 -> IntCode(ints, if (getValue(ip + 1, instruction.immediate1) != 0) getValue(ip + 2, instruction.immediate2) else ip + 3)
-					6 -> IntCode(ints, if (getValue(ip + 1, instruction.immediate1) == 0) getValue(ip + 2, instruction.immediate2) else ip + 3)
-					7 -> IntCode(ints.apply { this[getValue(ip + 3)] = if (getValue(ip + 1, instruction.immediate1) < getValue(ip + 2, instruction.immediate2)) 1 else 0 }, ip + 4)
-					8 -> IntCode(ints.apply { this[getValue(ip + 3)] = if (getValue(ip + 1, instruction.immediate1) == getValue(ip + 2, instruction.immediate2)) 1 else 0 }, ip + 4)
+					1 -> copy(memory = memory.apply { this[getOffset(ip + 3, instruction.mode3)] = getValue(ip + 1, instruction.mode1) + getValue(ip + 2, instruction.mode2) }, ip = ip + 4)
+					2 -> copy(memory = memory.apply { this[getOffset(ip + 3, instruction.mode3)] = getValue(ip + 1, instruction.mode1) * getValue(ip + 2, instruction.mode2) }, ip = ip + 4)
+					3 -> input()?.let { copy(memory = memory.apply { this[getOffset(ip + 1, instruction.mode1)] = it }, ip = ip + 2) } ?: throw IllegalStateException("no input")
+					4 -> copy(memory = memory.apply { output(getValue(ip + 1, instruction.mode1)) }, ip = ip + 2)
+					5 -> copy(memory = memory, ip = if (getValue(ip + 1, instruction.mode1) != 0L) getValue(ip + 2, instruction.mode2).toInt() else ip + 3)
+					6 -> copy(memory = memory, ip = if (getValue(ip + 1, instruction.mode1) == 0L) getValue(ip + 2, instruction.mode2).toInt() else ip + 3)
+					7 -> copy(memory = memory.apply { this[getOffset(ip + 3, instruction.mode3)] = if (getValue(ip + 1, instruction.mode1) < getValue(ip + 2, instruction.mode2)) 1L else 0L }, ip = ip + 4)
+					8 -> copy(memory = memory.apply { this[getOffset(ip + 3, instruction.mode3)] = if (getValue(ip + 1, instruction.mode1) == getValue(ip + 2, instruction.mode2)) 1L else 0L }, ip = ip + 4)
+					9 -> copy(ip = ip + 2, relativeBase = relativeBase + getValue(ip + 1, instruction.mode1).toInt())
 					99 -> null
-					else -> throw IllegalStateException()
+					else -> throw IllegalStateException("$this")
 				}
 			}
 
-	private fun getValue(index: Int, immediate: Boolean = true) =
-			ints[index].let { if (immediate) it else ints[it] }
+	private fun getValue(index: Int, mode: Mode = Positional) =
+			(memory[index] ?: 0).let {
+				when (mode) {
+					Positional -> memory[it.toInt()]
+					Immediate -> it
+					Relative -> memory[(relativeBase + it).toInt()]
+				}
+			} ?: 0
+
+	private fun getOffset(index: Int, mode: Mode = Positional): Int =
+			(memory[index] ?: 0).let {
+				when (mode) {
+					Positional -> it
+					Immediate -> throw IllegalArgumentException("write parameter in immediate mode: $this")
+					Relative -> (relativeBase + it)
+				}
+			}?.toInt() ?: 0
 
 }
 
-data class Instruction(val opcode: Int, val immediate1: Boolean, val immediate2: Boolean)
+enum class Mode { Positional, Immediate, Relative }
 
-fun Int.toInstruction() = Instruction(this % 100, ((this / 100) % 10) == 1, ((this / 1000) % 10) == 1)
+data class Instruction(val opcode: Int, val mode1: Mode, val mode2: Mode, val mode3: Mode)
 
-fun IntCode.run(inputs: Iterable<Int>, outputs: (Int) -> Unit): IntCode {
+fun Long.toInstruction() = Instruction((this % 100L).toInt(), values()[(this / 100 % 10).toInt()], values()[(this / 1000 % 10).toInt()], values()[(this / 10000 % 10).toInt()])
+
+fun IntCode.runUntilFirstOutput(inputs: Iterable<Long>, outputs: (Long) -> Unit): IntCode {
 	val inputIterator = inputs.iterator()
 	val inputSupplier = { if (inputIterator.hasNext()) inputIterator.next() else null }
 	return loopUntil { intCode ->
-		val output = AtomicReference<Int>(null)
+		val output = AtomicReference<Long>(null)
 		val result = intCode.exec(inputSupplier, { output.set(it) })?.let { (output.get() != null) to it } ?: true to intCode
 		output.get()?.let { outputs(it) }
 		result
+	}
+}
+
+fun IntCode.runUntilHalt(inputs: Iterable<Long>, outputs: (Long) -> Unit): IntCode {
+	val inputIterator = inputs.iterator()
+	val inputSupplier = { if (inputIterator.hasNext()) inputIterator.next() else null }
+	return loopUntil { intCode ->
+		intCode.exec(inputSupplier, outputs)?.let { false to it } ?: true to intCode
 	}
 }

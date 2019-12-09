@@ -27,16 +27,17 @@ fun main() {
 private fun part1() =
 		readInput(2).first()
 				.split(",")
-				.map(String::toInt)
-				.toMutableList()
+				.map(String::toLong)
+				.mapIndexed { index, l -> index to l }.toMap()
+				.toMutableMap()
 				.let { IntCode(it) }
-				.run(12, 2)
-				.ints[0]
+				.runUntilFirstOutput(12, 2)
+				.memory[0]
 
-private fun IntCode.run(noun: Int, verb: Int) =
-		IntCode(ints.apply {
-			this[1] = noun
-			this[2] = verb
+private fun IntCode.runUntilFirstOutput(noun: Int, verb: Int) =
+		IntCode(memory.apply {
+			this[1] = noun.toLong()
+			this[2] = verb.toLong()
 		})
 				.loopUntil { intCode ->
 					intCode.exec()?.let { false to it } ?: (true to intCode)
@@ -45,11 +46,11 @@ private fun IntCode.run(noun: Int, verb: Int) =
 private fun part2() = readInput(2)
 		.first()
 		.split(",")
-		.map(String::toInt)
+		.map(String::toLong)
 		.let {
 			(0..99).forEach { noun ->
 				(0..99).forEach { verb ->
-					if (it.toMutableList().let { IntCode(it) }.run(noun, verb).ints[0] == 19690720) {
+					if (it.mapIndexed { index, l -> index to l }.toMap().toMutableMap().let { IntCode(it) }.runUntilFirstOutput(noun, verb).memory[0] == 19690720L) {
 						println("$noun, $verb")
 					}
 				}
