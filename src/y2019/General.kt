@@ -47,6 +47,8 @@ data class IntCode(val memory: MutableMap<Int, Long>, private val ip: Int = 0, p
 				}
 			}
 
+	val willHalt get() = memory[ip] == 99L
+
 	private fun getValue(index: Int, mode: Mode = Positional) =
 			(memory[index] ?: 0).let {
 				when (mode) {
@@ -79,6 +81,15 @@ fun IntCode.runUntilFirstOutput(inputs: Iterable<Long>, outputs: (Long) -> Unit)
 	return loopUntil { intCode ->
 		val output = AtomicReference<Long>(null)
 		val result = intCode.exec(inputSupplier, { output.set(it) })?.let { (output.get() != null) to it } ?: true to intCode
+		output.get()?.let { outputs(it) }
+		result
+	}
+}
+
+fun IntCode.runUntilFirstOutput(inputs: () -> Long, outputs: (Long) -> Unit): IntCode {
+	return loopUntil { intCode ->
+		val output = AtomicReference<Long>(null)
+		val result = intCode.exec(inputs, { output.set(it) })?.let { (output.get() != null) to it } ?: true to intCode
 		output.get()?.let { outputs(it) }
 		result
 	}
