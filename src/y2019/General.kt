@@ -102,3 +102,13 @@ fun IntCode.runUntilHalt(inputs: Iterable<Long>, outputs: (Long) -> Unit): IntCo
 		intCode.exec(inputSupplier, outputs)?.let { false to it } ?: true to intCode
 	}
 }
+
+fun Sequence<String>.toIntCode() = toList().toIntCode()
+
+fun List<String>.toIntCode() = single()
+		.split(",")
+		.map(String::toLong)
+		.mapIndexed { index, i -> index to i }
+		.toMap()
+		.toMutableMap()
+		.let { IntCode(it) }
