@@ -3,6 +3,7 @@ package y2023
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+import utils.readInput
 
 fun solveDay1Part1(input: List<String>) =
 	input.sumOf { it.firstDigit() * 10 + it.lastDigit() }
@@ -27,8 +28,8 @@ private fun String.firstDigit(): Int = dropWhile { !it.isDigit() }.first().code 
 private fun String.lastDigit(): Int = reversed().firstDigit()
 
 fun main() {
-	println(solveDay1Part1(Day1Test::class.java.getResourceAsStream("Input1.txt").bufferedReader().readLines()))
-	println(solveDay1Part2(Day1Test::class.java.getResourceAsStream("Input1.txt").bufferedReader().readLines()))
+	println(solveDay1Part1(Day1Test::class.readInput(1)))
+	println(solveDay1Part2(Day1Test::class.readInput(1)))
 }
 
 private class Day1Test {
