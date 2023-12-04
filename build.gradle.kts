@@ -11,9 +11,6 @@ repositories {
 
 kotlin {
 	jvmToolchain(21)
-	sourceSets["main"].apply {
-		kotlin.srcDir("src")
-	}
 }
 
 dependencies {
