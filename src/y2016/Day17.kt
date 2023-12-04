@@ -8,9 +8,9 @@ fun main(args: Array<String>) {
 	println(second())
 }
 
-private fun first() = solve().minBy { it.length }
+private fun first() = solve().minByOrNull { it.length }
 
-private fun second() = solve().map { it.length }.max()
+private fun second() = solve().map { it.length }.maxOrNull()
 
 private fun solve(position: Int = 0, passcode: String = passcode(), pathsTaken: List<Set<Char>> = emptyList()): List<String> =
 		if (position == 15) {
