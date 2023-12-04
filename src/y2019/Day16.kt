@@ -22,7 +22,7 @@ import kotlin.math.*
 import kotlin.streams.*
 
 fun main() {
-	part1().println()
+	//part1().println()
 	part2().println()
 }
 
@@ -45,6 +45,17 @@ private fun phase(n: Int, digit: Int) = listOf(0, 1, 0, -1)
 			it[((digit + 1) / (n + 1)) % it.size]
 		}
 
-private fun part2() = input
+private fun part2() = testInput.loop(10000)
+		.let { sequence ->
+			val offset = sequence.take(7).joinToString("").toInt()
+			var newInput = sequence
+			(0..99).forEach { loop ->
+				newInput = newInput.fft()
+				newInput.subList(0, 8).joinToString("").println()
+			}
+			newInput.subList(offset, offset + 8).joinToString("")
+		}
+
+private val testInput = "19617804207202209144916044189917".chars().map { it - 48 }.toList()
 
 private val input = readInput(16).single().chars().map { it - 48 }.toList()

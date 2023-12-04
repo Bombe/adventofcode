@@ -2,6 +2,7 @@ package y2018
 
 import java.time.*
 import java.util.stream.*
+import kotlin.math.*
 
 fun Any.println() = println(this)
 
@@ -62,6 +63,7 @@ val Coordinate.y get() = second
 operator fun Coordinate.plus(coordinate: Coordinate): Coordinate = (first + coordinate.first) to (second + coordinate.second)
 operator fun Coordinate.minus(coordinate: Coordinate): Coordinate = (first - coordinate.first) to (second - coordinate.second)
 fun Coordinate.distanceTo(coordinate: Coordinate) = Math.abs(coordinate.first - first) + Math.abs(coordinate.second - second)
+val Coordinate.length:Double get() = sqrt(x.toDouble() * x + y * y)
 fun Coordinate.manhattanDistanceTo(coordinate: Coordinate = Coordinate(0, 0)) = Math.abs(first - coordinate.first) + Math.abs(second - coordinate.second)
 
 fun <T> List<T>.endsWith(elements: List<T>) =

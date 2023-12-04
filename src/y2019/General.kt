@@ -103,6 +103,47 @@ fun IntCode.runUntilHalt(inputs: Iterable<Long>, outputs: (Long) -> Unit): IntCo
 	}
 }
 
+enum class Direction {
+
+	Up {
+		override val left: Direction get() = Left
+		override val right: Direction get() = Right
+		override fun move(coordinate: Coordinate) = coordinate.copy(second = coordinate.second - 1)
+	},
+	Down {
+		override val left: Direction get() = Right
+		override val right: Direction get() = Left
+		override fun move(coordinate: Coordinate) = coordinate.copy(second = coordinate.second + 1)
+	},
+	Left {
+		override val left get() = Down
+		override val right get() = Up
+		override fun move(coordinate: Coordinate) = coordinate.copy(first = coordinate.first - 1)
+	},
+	Right {
+		override val left: Direction get() = Up
+		override val right: Direction get() = Down
+		override fun move(coordinate: Coordinate) = coordinate.copy(first = coordinate.first + 1)
+	};
+
+	abstract val left: Direction
+	abstract val right: Direction
+	abstract fun move(coordinate: Coordinate): Coordinate
+
+}
+
+fun Map<Coordinate, Char>.toImage() = let { coordinates ->
+	val minX = coordinates.keys.map { it.x }.min()!!
+	val minY = coordinates.keys.map { it.y }.min()!!
+	val maxX = coordinates.keys.map { it.x }.max()!!
+	val maxY = coordinates.keys.map { it.y }.max()!!
+	(minY..maxY).joinToString("\n") { row ->
+		(minX..maxX).map { column ->
+			coordinates[column to row] ?: ' '
+		}.joinToString("")
+	}
+}
+
 fun Sequence<String>.toIntCode() = toList().toIntCode()
 
 fun List<String>.toIntCode() = single()

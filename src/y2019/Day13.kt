@@ -53,8 +53,8 @@ private fun part2() = input
 				var paddle = 0
 				var ball = 0
 				val paddleInput = when {
-					ball.x > paddle -> 1L
-					ball.x < paddle -> -1L
+					ball > paddle -> 1L
+					ball < paddle -> -1L
 					else -> 0L
 				}
 				nextIntCode = nextIntCode
